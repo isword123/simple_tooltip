@@ -36,13 +36,11 @@
     };
 
     var setText = function ($tip, text) {
-        $tip.find('.nut-tooltip.text').text(text);
+        $tip.find('.nut-tooltip-text').text(text);
     };
 
-    var setDirection = function ($tip, direction) {
-        var $indicator = $tip.find('.nut-tooltip-indicator');
-
-        $indicator.removeClass().addClass('nut-tooltip-indicator').addClass(direction);
+    var setPosition = function ($tip, position) {
+        $tip.removeClass('top bottom left right').addClass(position);
     };
 
     var setTextFromTarget = function ($tip, $target) {
@@ -66,7 +64,7 @@
         $target.attr('title', oldTitle);
     };
 
-    var adjustPosition = function ($tip, $target, direction) {
+    var adjustPosition = function ($tip, $target, position) {
         var positionOfTarget = $target.offset(),
             widthOfTarget = $target.outerWidth(),
             heightOfTarget = $target.outerHeight(),
@@ -74,21 +72,21 @@
             heightOfTip = $tip.outerHeight(),
             styles = {};
         
-        switch (direction) {
+        switch (position) {
             case 'top':
                 styles.left = positionOfTarget.left + widthOfTarget / 2;
                 styles.top = positionOfTarget.top - heightOfTip;
                 break;
             case 'bottom':
                 styles.left = positionOfTarget.left + widthOfTarget / 2;
-                styles.top = positionOfTarget.top + heightOfTarget + heightOfTip;
+                styles.top = positionOfTarget.top + heightOfTarget;
                 break;
             case 'left':
                 styles.left = positionOfTarget.left - widthOfTip;
                 styles.top = positionOfTarget.top + heightOfTarget / 2;
                 break;
             case 'right':
-                styles.left = positionOfTarget.left + widthOfTarget + widthOfTip;
+                styles.left = positionOfTarget.left + widthOfTarget;
                 styles.top = positionOfTarget.top + heightOfTarget / 2;
                 break;
             default:
@@ -100,7 +98,7 @@
 
     var NutTooltip = (function (){
         var defaultOptions = {
-            direction: 'top',
+            position: 'top',
             tip: '',
             trigger: 'now'//hover, click
         };
@@ -108,7 +106,7 @@
         // target can be anything that can be selected by jQuery to be a jQuery DOM object
         var tip = function (target, options) {
             this._options = $.extend({}, defaultOptions, options);
-            this._$taget = $(target);
+            this._$target = $(target);
 
             this._setupEvents();
         };
@@ -118,22 +116,22 @@
             if (this._options.trigger === 'hover') {
                 this._bindHoverEvents();
             } else if (this._options.trigger === 'now') {
-
+                this._initialElement();
             } else if (this._options.trigger === 'click') {
 
             }
         };
 
-        this.prototype._initialElement = function () {
+        tip.prototype._initialElement = function () {
 
-            clearTitle(self._$target);
+            clearTitle(this._$target);
 
             $tip = createElement(); 
-            setDirection($tip, this._options.direction);
+            setPosition($tip, this._options.position);
             setText($tip, this._options.tip);
             
             $(document.body).append($tip);
-            adjustPosition($tip, $target, this._options.direction);
+            adjustPosition($tip, this._$target, this._options.position);
 
             this._$tip = $tip;
         };
@@ -159,23 +157,38 @@
             });
         };
 
+        tip.prototype.clearTip = function () {
+            //TODO, hide tip element, unbind all events
+        };
+
         return tip;
     })();
 
-    $.fn.nuttip = function (options) {
+    $.fn.nuttip = function () {
         var $this = $(this);
-        var pasredOptions = {};
-        parsedOptions.direction = $this.attr('data-nut-direction');
+        var originTipObject = $this.data('nut-tip-object');
+        if (originTipObject) {
+            originTipObject.clearTip();
+        }
+
+        var parsedOptions = {};
+        parsedOptions.position = $this.attr('data-nut-position');
         parsedOptions.tip = $this.attr('data-nut-tip');
         parsedOptions.trigger = $this.attr('data-nut-trigger');
-        
+
+        var tipObject = new NutTooltip($this, parsedOptions);
+        $this.data('nut-tip-object', tipObject);
+    };
+
+    $.nuttip = function ($target) {
+        $($target).nuttip();
     };
 
     /*
      * For every dom element that will show with the nut_tooltip plugin, it should:
      * (required) contains a 'rel' attribute that is 'nut-tooltip'
      * (required) contains a 'data-nut-tip' attribute that contains the info to show among tooltip
-     * (optional) contains a 'data-nut-direction' attribute that indicate where the arrow indicator is shown
+     * (optional) contains a 'data-nut-position' attribute that indicate where the arrow indicator is shown
        There are four values for now, 'top', 'right', 'bottom' and 'left', the default is 'top'
      */
 
@@ -184,7 +197,7 @@
      */
 
     $(function () {
-
+        $('[rel="nut-tooltip"]').nuttip();
     });
 
 })(jQuery);

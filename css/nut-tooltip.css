@@ -1,0 +1,59 @@
+.nut-tooltip-tip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  background-color: transparent;
+  font-size: 12px;
+}
+.nut-tooltip-tip .nut-tooltip-text {
+  color: #fcfcfc;
+  padding: 5px;
+  background-color: #555555;
+  background-color: rgba(64, 64, 64, 0.8);
+  border-radius: 5px;
+}
+.nut-tooltip-tip.top {
+  padding: 5px 0;
+}
+.nut-tooltip-tip.top .nut-tooltip-indicator {
+  bottom: -5px;
+  border-top-color: #555555;
+  border-top-color: rgba(64, 64, 64, 0.8);
+  left: 50%;
+  margin-left: -5px;
+}
+.nut-tooltip-tip.bottom {
+  padding: 5px 0;
+}
+.nut-tooltip-tip.bottom .nut-tooltip-indicator {
+  top: -5px;
+  border-bottom-color: #555555;
+  border-bottom-color: rgba(64, 64, 64, 0.8);
+  left: 50%;
+  margin-left: -5px;
+}
+.nut-tooltip-tip.left {
+  padding: 0 5px;
+}
+.nut-tooltip-tip.left .nut-tooltip-indicator {
+  right: -5px;
+  border-left-color: #555555;
+  border-left-color: rgba(64, 64, 64, 0.8);
+  top: 50%;
+  margin-top: -5px;
+}
+.nut-tooltip-tip.right {
+  padding: 0 5px;
+}
+.nut-tooltip-tip.right .nut-tooltip-indicator {
+  left: -5px;
+  border-right-color: #555555;
+  top: 50%;
+  margin-top: -5px;
+}
+.nut-tooltip-tip .nut-tooltip-indicator {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+}
